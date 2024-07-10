@@ -13,7 +13,7 @@ interface Data {
 }
 
 let context = getContext(this) as common.UIAbilityContext;
-let filePath = context.filesDir + '/group0.json';
+let filePath = context.filesDir + '/data1.json';
 
 let file = fileIo.openSync(filePath, fileIo.OpenMode.READ_WRITE | fileIo.OpenMode.CREATE);
 fileIo.close(file);
@@ -59,10 +59,11 @@ struct Index {
     return b.score - a.score;
   }
   @State data_teams: Data[] = temp;
+  @State datas: Data[] = temp;
 
-  getOption(): Options {
+  getOption(sorted: Data[]): Options {
 
-    const sorted = [...this.data_teams].sort((a, b) => b.score - a.score);
+    //const sorted = [...this.data_teams].sort((a, b) => b.score - a.score);
 
     return new Options({
 
@@ -149,9 +150,10 @@ struct Index {
   })
 
   aboutToAppear() {
-    this.defOption.setVal(this.getOption())
+    this.datas.sort(this.compare);
+    this.defOption.setVal(this.getOption(this.datas))
   }
-  @State simpleList: Array<number> = [0, 1, 2, 3, 4];
+  @State simpleList: Array<number> = [1, 2, 3, 4, 5];
 
   build() {
     Column() {
@@ -167,15 +169,19 @@ struct Index {
           Column({ space: 30 }) {
             Button(' +1 ')
               .onClick(() => {
-                this.data_teams[item].score += 1
-                this.defOption.setVal(this.getOption());
-                onUpdate(this.data_teams);
+                this.datas[item-1].score++;
+                this.datas.sort(this.compare);
+                onUpdate(this.datas);
+                //this.data_teams[item-1].score++;
+                this.defOption.setVal(this.getOption(this.datas));
               })
             Button(' -1 ')
               .onClick(() => {
-                this.data_teams[item].score -= 1;
-                this.defOption.setVal(this.getOption());
-                onUpdate(this.data_teams);
+                this.datas[item-1].score--;
+                this.datas.sort(this.compare);
+                onUpdate(this.datas);
+                //this.data_teams[item-1].score--;
+                this.defOption.setVal(this.getOption(this.datas));
               })
             TextInput({ placeholder: ''})
               .width('15%')
@@ -192,13 +198,15 @@ struct Index {
               .onChange((value) => {
                 let value_temp: number = Number(value);
                 if(value_temp >= 0) {
-                  this.data_teams[item].score = value_temp;
-                  this.defOption.setVal(this.getOption());
-                  onUpdate(this.data_teams)
+                  this.datas[item-1].score = value_temp;
+                  this.datas.sort(this.compare);
+                  onUpdate(this.datas)
+                  //this.data_teams[item-1].score = value_temp;
+                  this.defOption.setVal(this.getOption(this.datas));
                 }
               })
-            Text('第'+item+'组')
-              .fontSize(15)
+            // Text('第'+item+'组')
+            //   .fontSize(15)
           }
         }, (item: number) => item.toString())
       }
