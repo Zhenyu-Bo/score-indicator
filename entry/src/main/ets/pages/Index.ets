@@ -13,7 +13,7 @@ interface Data {
 }
 
 let context = getContext(this) as common.UIAbilityContext;
-let filePath = context.filesDir + '/data2.json';
+let filePath = context.filesDir + '/data6.json';
 
 let file = fileIo.openSync(filePath, fileIo.OpenMode.READ_WRITE | fileIo.OpenMode.CREATE);
 fileIo.close(file);
@@ -43,18 +43,15 @@ function onUpdate(dump_data : Data[]) {
   }
 }
 
+// 一个辅助函数，限制小数位数并转换回 number 类型
+function formatNumber(value: number, decimals: number): number {
+  return parseFloat(value.toFixed(decimals));
+}
+
 @Entry
 @Component
 struct Index {
-  // data: Data[] = [
-  //   {name: '第一组', score: 0},
-  //   {name: '第二组', score: 0},
-  //   {name: '第三组', score: 0},
-  //   {name: '第四组', score: 0},
-  //   {name: '第五组', score: 0},
-  // ];
-  //
-  // @State data_teams: Data[] = JSON.parse(data);
+
   compare(a: Data, b: Data) {
     return b.score - a.score;
   }
@@ -162,105 +159,122 @@ struct Index {
           options: this.defOption
         })
       }
-      .height('50%')
+      .height('40%')
 
-      Row() {
-        ForEach(this.simpleList, (item: number) => {
-          Column({ space: 30 }) {
-            Button(' +1 ')
-              .onClick(() => {
-                if(this.datas[item].name == '第二组' || this.datas[item].name == '第三组')
-                  this.datas[item].score += 1.167;
-                else
-                  this.datas[item].score++;
-                this.datas.sort(this.compare);
-                onUpdate(this.datas);
-                //this.data_teams[item-1].score++;
-                this.defOption.setVal(this.getOption(this.datas));
-              })
-            Button(' +5 ')
-              .onClick(() => {
-                if(this.datas[item].name == '第二组' || this.datas[item].name == '第三组')
-                  this.datas[item].score += 1.167*5;
-                else
-                  this.datas[item].score += 5;
-                this.datas.sort(this.compare);
-                onUpdate(this.datas);
-                //this.data_teams[item-1].score++;
-                this.defOption.setVal(this.getOption(this.datas));
-              })
-            Button('+10')
-              .onClick(() => {
-                if(this.datas[item].name == '第二组' || this.datas[item].name == '第三组')
-                  this.datas[item].score += 1.167*10;
-                else
-                  this.datas[item].score += 10;
-                this.datas.sort(this.compare);
-                onUpdate(this.datas);
-                //this.data_teams[item-1].score++;
-                this.defOption.setVal(this.getOption(this.datas));
-              })
-            Button(' -1 ')
-              .onClick(() => {
-                if(this.datas[item].name == '第二组' || this.datas[item].name == '第三组')
-                  this.datas[item].score -= 1.167;
-                else
-                  this.datas[item].score -= 1;
-                this.datas.sort(this.compare);
-                onUpdate(this.datas);
-                //this.data_teams[item-1].score--;
-                this.defOption.setVal(this.getOption(this.datas));
-              })
-            Button(' -5 ')
-              .onClick(() => {
-                if(this.datas[item].name == '第二组' || this.datas[item].name == '第三组')
-                  this.datas[item].score -= 1.167*5;
-                else
-                  this.datas[item].score -= 5;
-                this.datas.sort(this.compare);
-                onUpdate(this.datas);
-                //this.data_teams[item-1].score--;
-                this.defOption.setVal(this.getOption(this.datas));
-              })
-            Button('-10')
-              .onClick(() => {
-                if(this.datas[item].name == '第二组' || this.datas[item].name == '第三组')
-                  this.datas[item].score -= 1.167*10;
-                else
-                  this.datas[item].score -= 10;
-                this.datas.sort(this.compare);
-                onUpdate(this.datas);
-                //this.data_teams[item-1].score--;
-                this.defOption.setVal(this.getOption(this.datas));
-              })
-            // TextInput({ placeholder: ''})
-            //   .width('15%')
-            //   .height(45)
-            //   .type(InputType.Number)
-            //   .enterKeyType(EnterKeyType.Done)
-            //   .caretColor(Color.Red)
-            //   .placeholderColor(Color.Green)
-            //   .placeholderFont({
-            //     size: 20,
-            //     style: FontStyle.Italic,
-            //     weight: FontWeight.Bold
-            //   })
-            //   .onChange((value) => {
-            //     let value_temp: number = Number(value);
-            //     if(value_temp >= 0) {
-            //       this.datas[item-1].score = value_temp;
-            //       this.datas.sort(this.compare);
-            //       onUpdate(this.datas)
-            //       //this.data_teams[item-1].score = value_temp;
-            //       this.defOption.setVal(this.getOption(this.datas));
-            //     }
-            //   })
-            // Text('第'+item+'组')
-            //   .fontSize(15)
-          }
-        }, (item: number) => item.toString())
+      Column({space: 35}) {
+        Row() {
+          ForEach(this.simpleList, (item: number) => {
+            Column({ space: 30 }) {
+              Button(' +1 ')
+                .onClick(() => {
+                  if(this.datas[item].name == '第二组' || this.datas[item].name == '第三组')
+                    this.datas[item].score = formatNumber((this.data_teams[item].score + 1.167),3);
+                  else
+                    this.datas[item].score++;
+                  this.datas.sort(this.compare);
+                  onUpdate(this.datas);
+                  //this.data_teams[item-1].score++;
+                  this.defOption.setVal(this.getOption(this.datas));
+                })
+              Button(' +5 ')
+                .onClick(() => {
+                  if(this.datas[item].name == '第二组' || this.datas[item].name == '第三组')
+                    this.datas[item].score = formatNumber((this.data_teams[item].score + 5.833),3);
+                  else
+                    this.datas[item].score += 5;
+                  this.datas.sort(this.compare);
+                  onUpdate(this.datas);
+                  //this.data_teams[item-1].score++;
+                  this.defOption.setVal(this.getOption(this.datas));
+                })
+              Button('+10')
+                .onClick(() => {
+                  if(this.datas[item].name == '第二组' || this.datas[item].name == '第三组')
+                    this.datas[item].score = formatNumber((this.data_teams[item].score + 11.667),3);
+                  else
+                    this.datas[item].score += 10;
+                  this.datas.sort(this.compare);
+                  onUpdate(this.datas);
+                  //this.data_teams[item-1].score++;
+                  this.defOption.setVal(this.getOption(this.datas));
+                })
+              Button(' -1 ')
+                .onClick(() => {
+                  if((this.datas[item].name == '第二组' || this.datas[item].name == '第三组') && this.datas[item].score > 0)
+                    this.datas[item].score = formatNumber((this.data_teams[item].score - 1.167),3);
+                  else if(this.datas[item].score > 0)
+                    this.datas[item].score -= 1;
+                  this.datas.sort(this.compare);
+                  onUpdate(this.datas);
+                  //this.data_teams[item-1].score--;
+                  this.defOption.setVal(this.getOption(this.datas));
+                })
+              Button(' -5 ')
+                .onClick(() => {
+                  if(this.datas[item].name == '第二组' || this.datas[item].name == '第三组' && this.datas[item].score > 0)
+                    this.datas[item].score = formatNumber((this.data_teams[item].score - 5.833),3);
+                  else if(this.datas[item].score > 0)
+                    this.datas[item].score -= 5;
+                  this.datas.sort(this.compare);
+                  onUpdate(this.datas);
+                  //this.data_teams[item-1].score--;
+                  this.defOption.setVal(this.getOption(this.datas));
+                })
+              Button('-10')
+                .onClick(() => {
+                  if(this.datas[item].name == '第二组' || this.datas[item].name == '第三组' && this.datas[item].score > 0)
+                    this.datas[item].score = formatNumber((this.data_teams[item].score - 11.667),3);
+                  else if(this.datas[item].score > 0)
+                    this.datas[item].score -= 10;
+                  this.datas.sort(this.compare);
+                  onUpdate(this.datas);
+                  //this.data_teams[item-1].score--;
+                  this.defOption.setVal(this.getOption(this.datas));
+                })
+              // TextInput({ placeholder: ''})
+              //   .width('15%')
+              //   .height(45)
+              //   .type(InputType.Number)
+              //   .enterKeyType(EnterKeyType.Done)
+              //   .caretColor(Color.Red)
+              //   .placeholderColor(Color.Green)
+              //   .placeholderFont({
+              //     size: 20,
+              //     style: FontStyle.Italic,
+              //     weight: FontWeight.Bold
+              //   })
+              //   .onChange((value) => {
+              //     let value_temp: number = Number(value);
+              //     if(value_temp >= 0) {
+              //       this.datas[item-1].score = value_temp;
+              //       this.datas.sort(this.compare);
+              //       onUpdate(this.datas)
+              //       //this.data_teams[item-1].score = value_temp;
+              //       this.defOption.setVal(this.getOption(this.datas));
+              //     }
+              //   })
+              // Text('第'+item+'组')
+              //   .fontSize(15)
+            }
+          }, (item: number) => item.toString())
+        }
+
+        Row() {
+          Button('      clear      ')
+            .fontSize(20)
+              //.fontColor(Color.Red)
+            .padding({left: 80, right: 80})
+            .onClick(() => {
+              this.data_teams = [{name:"第一组", score:0}, {name:"第二组", score:0},{name:"第三组",score:0},{name:"第四组",score:0},{name:"第五组",score:0}];
+              this.datas = this.data_teams;
+              this.datas.sort(this.compare);
+              onUpdate(this.datas);
+              this.defOption.setVal(this.getOption(this.datas));
+            })
+        }
       }
+
     }
-    // .justifyContent(FlexAlign.SpaceAround)
+    .justifyContent(FlexAlign.SpaceAround)
   }
 }
